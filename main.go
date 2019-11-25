@@ -33,6 +33,6 @@ func Load(config *Config, i interface{}, paths ...string) (*Loader, error) {
 
 func (loader *Loader) Load(i interface{}, paths ...string) (*Loader, error) {
 	defer loader.Config.TraceTime("load")()
-	utils.ParseConfig(loader.Config, i, paths...)
-	return loader, nil
+	err := utils.ParseConfig(loader.Config, i, paths...)
+	return loader, err
 }

@@ -8,7 +8,10 @@ import (
 
 func readAsHttp(url string) ([]byte, error) {
 	resp, err := http.Get(url)
-	defer resp.Body.Close()
+	defer func() {
+		err := resp.Body.Close()
+		Failure(err, "read file error")
+	}()
 	if err != nil {
 		return nil, err
 	}
@@ -21,7 +24,10 @@ func readAsHttp(url string) ([]byte, error) {
 }
 func readAsFile(path string) ([]byte, error) {
 	f, err := os.Open(path)
-	defer f.Close()
+	defer func() {
+		err := f.Close()
+		Failure(err, "read file error")
+	}()
 	if err != nil {
 		return nil, err
 	}

@@ -3,13 +3,17 @@ package utils
 import (
 	"errors"
 	"log"
+	errs "github.com/pkg/errors"
 )
 
 var (
-	GetFileError = errors.New("get files error")
 	GetHttpError = errors.New("get http server error")
 )
 
-func Failure(err error) {
-	log.Fatalf("loader catch error: %v\n", err)
+func Failure(err error, message string) {
+	if err == nil {
+		return
+	}
+	err = errs.Wrap(err, message)
+	log.Fatalf("loader catch error: %+v\n", err)
 }

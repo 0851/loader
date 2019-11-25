@@ -52,11 +52,11 @@ func waits(paths []string, do func(item string) ([]byte, error)) ([][]byte, erro
 }
 
 func run(i time.Duration, keep func() (bool, error), debug bool) {
-	wait := sync.WaitGroup{}
-	wait.Add(1)
+	//wait := sync.WaitGroup{}
+	//wait.Add(1)
 	timer := time.AfterFunc(time.Second*i, func() {
 		defer func() {
-			wait.Done()
+			//wait.Done()
 		}()
 		if debug {
 			fmt.Println("start", time.Now())
@@ -66,14 +66,14 @@ func run(i time.Duration, keep func() (bool, error), debug bool) {
 			fmt.Println("end", time.Now())
 		}
 		if err != nil {
-			Failure(err)
+			Failure(err, "time run error")
 		}
 		if isKeep {
 			run(i, keep, debug)
 		}
 	})
 	timer.Reset(time.Second * i)
-	wait.Wait()
+	//wait.Wait()
 }
 func Auto(i time.Duration, keep func() (bool, error), debug bool) {
 	run(i, keep, debug)
