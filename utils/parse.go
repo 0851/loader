@@ -15,6 +15,9 @@ func parseConfig(config *Config, i interface{}, paths ...string) error {
 	if config.Debug {
 		fmt.Println("start parse config")
 	}
+	if len(paths) <= 0 {
+		return nil
+	}
 	datas, err := waits(paths, func(item string) ([]byte, error) {
 		if strings.HasPrefix(item, "http") {
 			return readAsHttp(item)

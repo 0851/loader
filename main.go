@@ -14,6 +14,8 @@ type Loader struct {
 	Config *Config
 }
 
+var Parse = utils.Parse
+
 func New(config *Config) *Loader {
 	if config == nil {
 		config = &Config{}
