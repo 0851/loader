@@ -43,9 +43,6 @@ func parseConfig(config *Config, i interface{}, paths ...string) error {
 	return nil
 }
 func ParseConfig(config *Config, i interface{}, paths ...string) error {
-	defer func() {
-		config.CallBack()
-	}()
 	//get default value
 	value := reflect.Indirect(reflect.ValueOf(i))
 	if !value.CanAddr() {
@@ -55,10 +52,12 @@ func ParseConfig(config *Config, i interface{}, paths ...string) error {
 	if err != nil {
 		return err
 	}
-	if config.Reload {
+	if config.Reload == true && config.Interval != 0 {
 		Auto(config.Interval, func() (bool, error) {
 			defer func() {
-				config.CallBack()
+				if config.CallBack != nil {
+					config.CallBack()
+				}
 			}()
 			//set default value at parse before
 			reflectPtr := reflect.New(reflect.ValueOf(i).Elem().Type())
