@@ -43,7 +43,6 @@ func parseConfig(config *Config, i interface{}, paths ...string) error {
 	return nil
 }
 func ParseConfig(config *Config, i interface{}, paths ...string) error {
-	//get default value
 	value := reflect.Indirect(reflect.ValueOf(i))
 	if !value.CanAddr() {
 		return fmt.Errorf("data %v err", i)
