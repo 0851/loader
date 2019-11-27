@@ -93,10 +93,6 @@ func Parse(i interface{}, content []byte, debug bool) error {
 	if err != nil {
 		return err
 	}
-	err = env.Parse(i)
-	if err != nil {
-		Failure(err, "env parse error")
-		return err
-	}
+	_ = env.Parse(i)
 	return nil
 }

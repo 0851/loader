@@ -14,7 +14,7 @@ type A struct {
 }
 
 func main() {
-	data := A{}
+	var data map[string]interface{}
 	config := &loader.Config{
 		Debug:  true,
 		Reload: true,
