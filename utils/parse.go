@@ -18,7 +18,8 @@ func parseConfig(config *Config, i interface{}, paths ...string) error {
 	if len(paths) <= 0 {
 		return nil
 	}
-	datas, err := waits(paths, func(item string) ([]byte, error) {
+	items, err := Waits(len(paths), func(i int) (interface{}, error) {
+		item := paths[i]
 		if strings.HasPrefix(item, "http") {
 			return readAsHttp(item)
 		}
@@ -31,8 +32,8 @@ func parseConfig(config *Config, i interface{}, paths ...string) error {
 	if err != nil {
 		return err
 	}
-	for _, item := range datas {
-		err := Parse(i, item, config.Debug)
+	for _, item := range items {
+		err := Parse(i, item.([]byte), config.Debug)
 		if err != nil {
 			return err
 		}

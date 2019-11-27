@@ -14,41 +14,40 @@ func If(condition bool, trueVal, falseVal interface{}) interface{} {
 }
 
 /**
-waits 并行执行
+Waits 并行执行
 */
-func waits(paths []string, do func(item string) ([]byte, error)) ([][]byte, error) {
-	type pathMutex struct {
-		result [][]byte
-		locker *sync.Mutex
-		wait   *sync.WaitGroup
-		errs   []error
-	}
-	lenPath := len(paths)
-	chunks := pathMutex{
-		locker: &sync.Mutex{},
-		wait:   &sync.WaitGroup{},
-	}
-	chunks.wait.Add(lenPath)
-	for _, item := range paths {
-		go func(item string) {
-			defer func() {
-				chunks.locker.Unlock()
-				chunks.wait.Done()
-			}()
-			chunks.locker.Lock()
-			chunk, err := do(item)
-			chunks.result = append(chunks.result, chunk)
-			if err != nil {
-				chunks.errs = append(chunks.errs, err)
-			}
 
-		}(item)
+func Waits(l int, do func(item int) (interface{}, error)) ([]interface{}, error) {
+	var result []interface{}
+	var errs []error
+	var wg sync.WaitGroup
+	ch := make(chan chan interface{}, l)
+	wg.Add(l)
+	for i := 0; i < l; i++ {
+		c := make(chan interface{}, 1)
+		ch <- c
+		go func(i int) {
+			defer func() {
+				wg.Done()
+				close(c)
+			}()
+			chunk, err := do(i)
+			c <- chunk
+			if err != nil {
+				errs = append(errs, err)
+			}
+		}(i)
 	}
-	chunks.wait.Wait()
-	if len(chunks.errs) > 0 {
-		return nil, chunks.errs[0]
+	wg.Wait()
+	close(ch)
+	for i := 0; i < l; i++ {
+		c := <-ch
+		result = append(result, <-c)
 	}
-	return chunks.result, nil
+	if len(errs) > 0 {
+		return nil, errs[0]
+	}
+	return result, nil
 }
 
 func run(i time.Duration, keep func() (bool, error), debug bool) {
